@@ -1,27 +1,41 @@
+## JSONTypeWiz
+
 ---
-title: Fiber
-description: A Fiber web server
-tags:
-  - fiber
-  - golang
----
+Convert your JSON API Response to valid TypeScript types.
 
-# Fiber Example
+### Milestones
 
-This example starts a [Fiber](https://gofiber.io/) server.
+1. Convert json with only primitives to typescript type
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/7di0JR)
+Input:
+```json lines
+{
+  "key": "value",
+  "key2": true,
+  "key3": 100
+}
+```
+Output:
+```typescript
+type JSONTypeWiz ={
+    "key": string,
+    "key2":boolean
+    "key3": number
+}
+```
 
-## ✨ Features
+Potential struct:
 
-- Fiber
-- Go
+````go
+package main
+type Wiz struct {
+    key string
+    parent *Wiz 
+    objType string 
+    children *Wiz 
+}
 
-## 💁‍♀️ How to use
-
-- Connect to your Railway project `railway link`
-- Start the development server `railway run go run main.go`
-
-## 📝 Notes
-
-The server started simply returns a `message: "Hello, Railway!"` payload in JSON. The server code is located in `main.go`.
+func getTypeString(wiz *Wiz)string {
+	return ""
+}
+````
