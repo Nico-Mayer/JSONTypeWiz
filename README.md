@@ -39,3 +39,7 @@ func getTypeString(wiz *Wiz)string {
 	return ""
 }
 ````
+
+## Resources
+1. [JSON decoding/encoding](https://gobyexample.com/json)
+2. [Data structures in go](https://blog.logrocket.com/comprehensive-guide-data-structures-go)

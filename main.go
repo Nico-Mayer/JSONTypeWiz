@@ -34,5 +34,10 @@ func main() {
 		})
 	})
 
+	app.Post("/", func(ctx *fiber.Ctx) error {
+		println(string(ctx.Body()))
+		return nil
+	})
+
 	app.Listen(getPort())
 }
