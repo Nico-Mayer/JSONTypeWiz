@@ -1,9 +1,10 @@
 package main
 
 import (
-	"os"
-
+	"encoding/json"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"os"
 )
 
 type Wiz struct {
@@ -35,9 +36,30 @@ func main() {
 	})
 
 	app.Post("/", func(ctx *fiber.Ctx) error {
-		println(string(ctx.Body()))
+		//create a map which holds strings as key and any data type as values
+		//TODO How does interface work ?
+		var jsonStore map[string]interface{}
+		//create a pointer to memory location
+		var storePtr = &jsonStore
+		err := json.Unmarshal(ctx.Body(), storePtr)
+		if err != nil {
+			panic(err)
+		}
+		recMapPrinter(jsonStore)
+		fmt.Println(jsonStore)
 		return nil
 	})
 
 	app.Listen(getPort())
+}
+
+func recMapPrinter(json map[string]interface{}) {
+	for key, value := range json {
+		//if value is another map loop over it again
+		if data, ok := value.(map[string]interface{}); ok {
+			fmt.Printf("Key: %s, holds nested map \n", key)
+			recMapPrinter(data)
+		}
+		fmt.Printf("Key: %s, Value: %s \n", key, value)
+	}
 }
