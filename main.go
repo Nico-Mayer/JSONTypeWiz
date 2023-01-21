@@ -46,7 +46,6 @@ func main() {
 			panic(err)
 		}
 		recMapPrinter(jsonStore)
-		fmt.Println(jsonStore)
 		return nil
 	})
 
@@ -59,6 +58,11 @@ func recMapPrinter(json map[string]interface{}) {
 		if data, ok := value.(map[string]interface{}); ok {
 			fmt.Printf("Key: %s, holds nested map \n", key)
 			recMapPrinter(data)
+		}
+		if data, ok := value.([]map[string]interface{}); ok {
+			for _, item := range data {
+				recMapPrinter(item)
+			}
 		}
 		fmt.Printf("Key: %s, Value: %s \n", key, value)
 	}
