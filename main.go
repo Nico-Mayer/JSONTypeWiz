@@ -3,8 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"os"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type Wiz struct {
@@ -45,25 +46,50 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		recMapPrinter(jsonStore)
+		recMapPrinter(jsonStore, 0)
 		return nil
 	})
 
 	app.Listen(getPort())
 }
 
-func recMapPrinter(json map[string]interface{}) {
-	for key, value := range json {
-		//if value is another map loop over it again
+func recMapPrinter(json map[string]interface{}, indent int) {
+	// Create indentation string
+	indentString := ""
+	for i := 0; i < indent; i++ {
+		indentString += "  "
+	}
+	// Get keys from json
+	keys := make([]string, 0, len(json))
+	for key := range json {
+		keys = append(keys, key)
+	}
+
+	// Iterate over sorted keys
+	for _, key := range keys {
+		value := json[key]
 		if data, ok := value.(map[string]interface{}); ok {
-			fmt.Printf("Key: %s, holds nested map \n", key)
-			recMapPrinter(data)
-		}
-		if data, ok := value.([]map[string]interface{}); ok {
-			for _, item := range data {
-				recMapPrinter(item)
+			// if value is another map loop over it again
+			fmt.Printf("%s%s:\n", indentString, key)
+			recMapPrinter(data, indent+1)
+		} else if data, ok := value.([]interface{}); ok {
+			// if value is an array loop over it
+			fmt.Printf("%s%s: \n", indentString, key)
+			for _, itemInArray := range data {
+				if data, ok := itemInArray.(string); ok {
+					// if item in array is a string, print it
+					fmt.Printf("%s %v%s\n", indentString, data, " (string)")
+				}
+				if mp, ok := itemInArray.(map[string]interface{}); ok {
+					// if item in array is a map, call function recursively
+					recMapPrinter(mp, indent+1)
+				}
+
 			}
+
+		} else {
+			// if the value is not a map or array, print it
+			fmt.Printf("%s%s: %v\n", indentString, key, value)
 		}
-		fmt.Printf("Key: %s, Value: %s \n", key, value)
 	}
 }
